@@ -1,0 +1,562 @@
+/* ========================================
+   VARIABLES CSS
+   ======================================== */
+:root {
+  --sidebar-bg: #ffffff;
+  --sidebar-text: #374151;
+  --sidebar-text-muted: #9ca3af;
+  --sidebar-hover: #f3f4f6;
+  --sidebar-active: #f0f1f4;
+  --sidebar-border: #e5e7eb;
+  --sidebar-shadow: rgba(0, 0, 0, 0.05);
+  
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --primary-light: #dbeafe;
+  
+  --accent: #8b5cf6;
+  --accent-hover: #7c3aed;
+  
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --danger-light: #fee2e2;
+}
+
+/* ========================================
+   SIDEBAR PRINCIPAL
+   ======================================== */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 12px var(--sidebar-shadow);
+  border-right: 1px solid var(--sidebar-border);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.sidebar.collapsed {
+  width: 72px;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+.sidebar-header {
+  padding: 1.25rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--sidebar-border);
+  min-height: 72px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.125rem;
+  color: var(--sidebar-text);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.logo i {
+  font-size: 1.5rem;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+  color: var(--sidebar-text);
+}
+
+.sidebar.collapsed .logo-text {
+  opacity: 0;
+  width: 0;
+}
+
+.toggle-btn {
+  width: 36px;
+  height: 36px;
+  background: var(--sidebar-hover);
+  border: 1px solid var(--sidebar-border);
+  color: var(--sidebar-text);
+  font-size: 1.25rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toggle-btn:hover {
+  background: var(--sidebar-active);
+  border-color: var(--sidebar-text-muted);
+  transform: scale(1.05);
+}
+
+.toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* ========================================
+   USER INFO
+   ======================================== */
+.user-info {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  background: var(--sidebar-hover);
+  margin: 1rem;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.user-info:hover {
+  background: var(--sidebar-active);
+  box-shadow: 0 2px 8px var(--sidebar-shadow);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: black;
+  font-size: 1.8rem;
+}
+
+.user-details {
+  overflow: hidden;
+  transition: opacity 0.2s ease;
+  flex: 1;
+}
+
+.sidebar.collapsed .user-details {
+  opacity: 0;
+  width: 0;
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--sidebar-text);
+  line-height: 1.4;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: var(--sidebar-text-muted);
+  margin: 0.125rem 0 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* ========================================
+   DIVIDER
+   ======================================== */
+.sidebar-divider {
+  height: 1px;
+  background: var(--sidebar-border);
+  margin: 0.75rem 1rem;
+}
+
+/* ========================================
+   MENU
+   ======================================== */
+.sidebar-menu {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.5rem;
+}
+
+/* Custom scrollbar minimalista */
+.sidebar-menu::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+  background: var(--sidebar-border);
+  border-radius: 2px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+  background: var(--sidebar-text-muted);
+}
+
+.menu-section {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 0.688rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sidebar-text-muted);
+  margin: 0 0.75rem 0.5rem 0.75rem;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .section-title {
+  opacity: 0;
+  height: 0;
+  margin: 0;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* ========================================
+   MENU ITEMS (Estilo Minimalista)
+   ======================================== */
+.menu-item {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--primary);
+  border-radius: 0 2px 2px 0;
+  transition: height 0.2s ease;
+}
+
+.menu-item:hover {
+  background: var(--sidebar-hover);
+}
+
+.menu-item:hover::before {
+  height: 20px;
+}
+
+.menu-item.active {
+  background: var(--primary-light);
+}
+
+.menu-item.active::before {
+  height: 24px;
+}
+
+.menu-item.active .menu-item-content {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.menu-item.active .menu-item-content i {
+  color: var(--primary);
+}
+
+.menu-item-content {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--sidebar-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.sidebar.collapsed .menu-item-content {
+  justify-content: center;
+  padding: 0.625rem;
+}
+
+.menu-item-content i {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+  color: var(--sidebar-text-muted);
+  transition: color 0.2s ease;
+}
+
+.menu-item:hover .menu-item-content i {
+  color: var(--sidebar-text);
+}
+
+.menu-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.collapsed .menu-label {
+  opacity: 0;
+  width: 0;
+}
+
+/* Badge minimalista */
+.badge {
+  background: var(--danger);
+  color: white;
+  font-size: 0.688rem;
+  font-weight: 700;
+  padding: 0.125rem 0.5rem;
+  border-radius: 10px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.sidebar.collapsed .badge {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  transform: scale(0.85);
+}
+
+/* ========================================
+   FOOTER / LOGOUT BUTTON
+   ======================================== */
+.sidebar-footer {
+  padding: 0.75rem;
+  margin-top: auto;
+  border-top: 1px solid var(--sidebar-border);
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem;
+  background: var(--danger-light);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logout-btn:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+.logout-btn i {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.sidebar.collapsed .logout-btn {
+  justify-content: center;
+  padding: 0.75rem;
+}
+
+.sidebar.collapsed .logout-btn span {
+  opacity: 0;
+  width: 0;
+}
+
+/* ========================================
+   TOOLTIPS (Para sidebar colapsado)
+   ======================================== */
+.sidebar.collapsed .menu-item {
+  position: relative;
+}
+
+.sidebar.collapsed .menu-item::after {
+  content: attr(title);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--sidebar-text);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar.collapsed .menu-item:hover::after {
+  opacity: 1;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
+  }
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.menu-item {
+  animation: slideIn 0.3s ease-out backwards;
+}
+
+.menu-item:nth-child(1) { animation-delay: 0.03s; }
+.menu-item:nth-child(2) { animation-delay: 0.06s; }
+.menu-item:nth-child(3) { animation-delay: 0.09s; }
+.menu-item:nth-child(4) { animation-delay: 0.12s; }
+.menu-item:nth-child(5) { animation-delay: 0.15s; }
+.menu-item:nth-child(6) { animation-delay: 0.18s; }
+.menu-item:nth-child(7) { animation-delay: 0.21s; }
+.menu-item:nth-child(8) { animation-delay: 0.24s; }
+
+/* ========================================
+   ESTADOS DE CARGA
+   ======================================== */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.menu-item.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   TEMA OSCURO (Opcional)
+   ======================================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --sidebar-bg: #1f2937;
+    --sidebar-text: #f9fafb;
+    --sidebar-text-muted: #9ca3af;
+    --sidebar-hover: #374151;
+    --sidebar-active: #4b5563;
+    --sidebar-border: #374151;
+    --sidebar-shadow: rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ========================================
+   MEJORAS DE ACCESIBILIDAD
+   ======================================== */
+.menu-item:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  border-radius: 8px;
+}
+
+.logout-btn:focus-visible {
+  outline: 2px solid var(--danger);
+  outline-offset: -2px;
+}
+
+.toggle-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

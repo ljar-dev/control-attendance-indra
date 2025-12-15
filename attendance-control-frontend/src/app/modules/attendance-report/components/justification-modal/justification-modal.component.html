@@ -1,0 +1,102 @@
+<div class="modal-backdrop" 
+     *ngIf="show" 
+     (click)="onBackdropClick($event)">
+  
+  <div class="modal-container">
+    
+    <!-- Header -->
+    <div class="modal-header">
+      <h2>{{ isJustified ? 'Ver Justificación' : 'Ingresar Justificación' }}</h2>
+      <button class="close-btn" (click)="onClose()" type="button">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Información del Registro -->
+    <div class="attendance-info" *ngIf="attendanceRecord">
+      <div class="info-row">
+        <span class="info-label">Empleado:</span>
+        <span class="info-value">{{ attendanceRecord.employeeName }} ({{ attendanceRecord.employeeCode }})</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Fecha:</span>
+        <span class="info-value">{{ attendanceRecord.attendanceDate }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Estado:</span>
+        <span class="info-value">
+          <span class="status-badge" [ngClass]="'status-' + attendanceRecord.status">
+            {{ attendanceRecord.status }}
+          </span>
+        </span>
+      </div>
+      <div class="info-row" *ngIf="justification?.submittedAt">
+        <span class="info-label">Enviado:</span>
+        <span class="info-value">{{ justification.submittedAt }}</span>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="justificationForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Texto de Justificación -->
+      <div class="form-group">
+        <label for="justificationText" class="form-label">
+          {{ isReadOnly ? 'Justificación' : 'Ingrese su justificación' }}
+          <span class="required" *ngIf="!isReadOnly">*</span>
+        </label>
+        
+        <textarea
+          id="justificationText"
+          class="form-textarea"
+          formControlName="justificationText"
+          [placeholder]="isReadOnly ? '' : 'Explique el motivo de su tardanza o ausencia...'"
+          [readonly]="isReadOnly || isJustified"
+          rows="6">
+        </textarea>
+
+        <!-- Character Counter -->
+        <div class="textarea-footer" *ngIf="!isReadOnly && !isJustified">
+          <span class="char-count" [class.error]="characterCount > 1000">
+            {{ characterCount }} / 1000 caracteres
+          </span>
+          <span class="help-text">Mínimo 10 caracteres</span>
+        </div>
+
+        <!-- Errores de validación -->
+        <div class="error-message" *ngIf="justificationText?.invalid && justificationText?.touched">
+          <span *ngIf="justificationText?.errors?.['required']">
+            La justificación es obligatoria
+          </span>
+          <span *ngIf="justificationText?.errors?.['minlength']">
+            La justificación debe tener al menos 10 caracteres
+          </span>
+          <span *ngIf="justificationText?.errors?.['maxlength']">
+            La justificación no puede exceder los 1000 caracteres
+          </span>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn-cancel"
+          (click)="onClose()"
+          [disabled]="submitting">
+          {{ isReadOnly || isJustified ? 'Cerrar' : 'Cancelar' }}
+        </button>
+
+        <button 
+          type="submit" 
+          class="btn-submit"
+          *ngIf="!isReadOnly && !isJustified"
+          [disabled]="justificationForm.invalid || submitting">
+          <span *ngIf="!submitting">Enviar Justificación</span>
+          <span *ngIf="submitting">Enviando...</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

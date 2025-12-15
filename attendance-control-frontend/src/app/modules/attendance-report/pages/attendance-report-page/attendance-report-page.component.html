@@ -1,0 +1,280 @@
+<div class="report-wrapper">
+  <div class="report-container">
+    
+    <!-- Header -->
+    <div class="report-header">
+      <h1>Reporte de Asistencia</h1>
+      <p>Consulta los registros de asistencia por empleado</p>
+    </div>
+
+    <!-- Selección de Empleado -->
+    <div class="employee-selection-section">
+      <app-select
+        label="Empleado"
+        placeholder="Selecciona un empleado"
+        [options]="employees"
+        optionLabel="label"
+        optionValue="value"
+        [required]="true"
+        [disabled]="loadingEmployees"
+        [(ngModel)]="selectedEmployeeId"
+        (selectionChange)="onEmployeeSelected($event)"
+        (valueChange)="onEmployeeValueChange($event)"
+        [helperText]="loadingEmployees ? 'Cargando empleados...' : 'Selecciona un empleado para ver su historial'">
+      </app-select>
+
+      <button 
+        *ngIf="selectedEmployeeId"
+        class="btn-clear-selection"
+        (click)="clearSelection()">
+        Limpiar selección
+      </button>
+    </div>
+
+    <!-- Mostrar solo si hay empleado seleccionado -->
+    <ng-container *ngIf="selectedEmployeeId">
+
+      <!-- Información del empleado seleccionado -->
+      <div class="selected-employee-info">
+        <div class="employee-badge">
+          <span class="employee-icon">👤</span>
+          <div class="employee-details">
+            <span class="employee-label">Empleado seleccionado:</span>
+            <span class="employee-name">{{ selectedEmployeeName }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filters-section">
+        <div class="filters-grid">
+          <div class="filter-item">
+            <label>Desde</label>
+            <input 
+              type="date" 
+              [(ngModel)]="dateFrom"
+              [disabled]="loading"
+              class="date-input">
+          </div>
+
+          <div class="filter-item">
+            <label>Hasta</label>
+            <input 
+              type="date" 
+              [(ngModel)]="dateTo"
+              [disabled]="loading"
+              class="date-input">
+          </div>
+
+          <div class="filter-actions">
+            <button 
+              class="btn-primary" 
+              (click)="applyFilters()"
+              [disabled]="loading">
+              Filtrar
+            </button>
+            <button 
+              class="btn-secondary" 
+              (click)="clearFilters()"
+              [disabled]="loading">
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen -->
+      <div class="summary-section">
+        <div class="summary-card">
+          <div class="summary-icon"><i class="pi pi-calendar"></i></div>
+          <div class="summary-content">
+            <span class="summary-value">{{ summary.totalDays }}</span>
+            <span class="summary-label">Total días</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon"><i class="pi pi-check"></i></div>
+          <div class="summary-content">
+            <span class="summary-value">{{ summary.completeDays }}</span>
+            <span class="summary-label">Completos</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon"><i class="pi pi-exclamation-triangle"></i></div>
+          <div class="summary-content">
+            <span class="summary-value">{{ summary.incompleteDays }}</span>
+            <span class="summary-label">Incompletos</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon"><i class="pi pi-clock"></i></div>
+          <div class="summary-content">
+            <span class="summary-value">{{ summary.totalHours }}h</span>
+            <span class="summary-label">Total horas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando registros...</p>
+      </div>
+
+      <!-- Tabla de registros -->
+      <div *ngIf="!loading && records.length > 0" class="table-container">
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Día</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th>Justificación</th>
+              <th>Aprobación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let record of records" class="table-row">
+              <td>
+                <div class="date-cell">
+                  <span class="day-number">{{ getDayOfMonth(record.createdAt) }}</span>
+                  <span class="month-year">{{ getMonthShort(record.createdAt) }}</span>
+                </div>
+              </td>
+              <td>{{ getDayName(record.createdAt) }}</td>
+              <td class="time-cell">{{ formatTime(record.checkIn) }}</td>
+              <td class="time-cell">{{ formatTime(record.checkOut) }}</td>
+              <td class="hours-cell">
+                {{ calculateHours(record.checkIn, record.checkOut) }}
+              </td>
+              <td>
+                <span [class]="getStatusClass(record)" class="status-badge">
+                  {{ getStatus(record) }}
+                </span>
+              </td>
+              
+              <td class="justification-cell">
+                <!-- Caso: Tiene justificación enviada -->
+                <button 
+                  *ngIf="hasJustification(record)"
+                  class="justification-btn view-only"
+                  (click)="openJustificationModal(record)"
+                  title="Ver justificación">
+                  <i class="pi pi-file-edit"></i>
+                </button>
+
+                <!-- Caso: No tiene justificación -->
+                <span *ngIf="!hasJustification(record)" class="no-justification">
+                  -
+                </span>
+              </td>
+
+              <td class="approval-cell">
+                <div *ngIf="hasJustification(record)" class="approval-controls">
+                  <label class="approval-checkbox">
+                    <input 
+                      type="checkbox"
+                      [checked]="record.justification?.approved === true"
+                      (change)="updateJustificationApproval(record.justification!.idJustification!, true)"
+                      [disabled]="record.justification?.approved !== null">
+                    <span class="approval-label approved">Aprobar</span>
+                  </label>
+                  
+                  <label class="approval-checkbox">
+                    <input 
+                      type="checkbox"
+                      [checked]="record.justification?.approved === false"
+                      (change)="updateJustificationApproval(record.justification!.idJustification!, false)"
+                      [disabled]="record.justification?.approved !== null">
+                    <span class="approval-label rejected">Rechazar</span>
+                  </label>
+                
+                </div>
+                <span *ngIf="!hasJustification(record)">-</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Sin registros -->
+      <div *ngIf="!loading && records.length === 0" class="no-records">
+        <div class="no-records-icon">📭</div>
+        <h3>No hay registros</h3>
+        <p>No se encontraron registros de asistencia para este empleado en el rango de fechas seleccionado.</p>
+      </div>
+
+      <!-- Paginación usando tu componente -->
+      <!-- <div *ngIf="!loading && records.length > 0" class="pagination-wrapper">
+        <app-paginator
+          [totalItems]="totalElements"
+          [pageSize]="pageSize"
+          [currentPage]="currentPage"
+          [maxVisiblePages]="5"
+          (pageChange)="onPageChange($event)">
+        </app-paginator>
+      </div> -->
+
+      <!-- Paginación -->
+      <div *ngIf="!loading && records.length > 0" class="pagination-section">
+        <div class="pagination-info">
+          <span>Mostrando {{ getRecordsRange() }} registros</span>
+          
+          <select 
+            [value]="pageSize" 
+            (change)="onPageSizeChange($event)"
+            class="page-size-select">
+            <option *ngFor="let size of pageSizeOptions" [value]="size">
+              {{ size }} por página
+            </option>
+          </select>
+        </div>
+
+        <div class="pagination-controls">
+          <button 
+            class="page-btn" 
+            (click)="previousPage()"
+            [disabled]="!hasPreviousPage()">
+            ← Anterior
+          </button>
+
+          <span class="page-indicator">
+            Página {{ currentPage + 1 }} de {{ getTotalPages() }}
+          </span>
+
+          <button 
+            class="page-btn" 
+            (click)="nextPage()"
+            [disabled]="!hasNextPage()">
+            Siguiente →
+          </button>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <!-- Mensaje inicial (sin empleado seleccionado) -->
+    <div *ngIf="!selectedEmployeeId && !loadingEmployees" class="empty-state">
+      <div class="empty-state-icon"><i class="pi pi-search"></i></div>
+      <h3>Selecciona un empleado</h3>
+      <p>Elige un empleado del listado para ver su historial de asistencia</p>
+    </div>
+
+    
+
+  </div>
+</div>
+
+<!-- MODAL DE JUSTIFICACIÓN (SOLO LECTURA) -->
+<app-justification-modal
+  [show]="showJustificationModal"
+  [attendanceRecord]="selectedAttendanceRecord"
+  [justification]="selectedJustification"
+  [isReadOnly]="true"
+  (closeModal)="closeJustificationModal()">
+</app-justification-modal>

@@ -1,0 +1,12 @@
+<div class="toast-container" [class.show]="visible">
+  <div class="toast" [attr.data-type]="type">
+    <div class="toast-icon">
+      <span class="icon">{{ getIcon() }}</span>
+    </div>
+    <div class="toast-content">
+      <h4 class="toast-title">{{ title }}</h4>
+      <p class="toast-message">{{ message }}</p>
+    </div>
+    <button class="toast-close" (click)="close()">×</button>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="login-wrapper">
+  <div class="login-card">
+
+    <div class="card-header">
+      <h2>Primer Inicio de Sesión</h2>
+      <p>Debes cambiar tu contraseña</p>
+    </div>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="submit()">
+
+      <!-- Nueva contraseña -->
+      <div class="form-group">
+        <label>Nueva Contraseña</label>
+        <input
+          type="password"
+          formControlName="newPassword"
+          placeholder="Ingresa tu nueva contraseña"
+          [class.invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+
+        <span class="error" *ngIf="passwordForm.get('newPassword')?.touched">
+          <span *ngIf="passwordForm.get('newPassword')?.errors?.['required']">
+            La contraseña es requerida
+          </span>
+          <span *ngIf="passwordForm.get('newPassword')?.errors?.['minlength']">
+            Mínimo 6 caracteres
+          </span>
+        </span>
+      </div>
+
+      <!-- Confirmar contraseña -->
+      <div class="form-group">
+        <label>Confirmar Contraseña</label>
+        <input
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirma tu contraseña"
+          [class.invalid]="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched">
+
+        <span class="error" *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched">
+          Las contraseñas no coinciden
+        </span>
+      </div>
+
+      <button
+        type="submit"
+        class="btn-submit"
+        [disabled]="passwordForm.invalid || loading">
+        {{ loading ? 'Guardando...' : 'Actualizar Contraseña' }}
+      </button>
+
+    </form>
+
+  </div>
+</div>

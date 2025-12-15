@@ -1,0 +1,207 @@
+<div class="report-wrapper">
+  <div class="report-container">
+    
+    <!-- Header -->
+    <div class="report-header">
+      <h1>Mi Historial de Asistencia</h1>
+      <p>Consulta tus registros de entrada y salida</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+      <div class="filters-grid">
+        <div class="filter-item">
+          <label>Desde</label>
+          <input 
+            type="date" 
+            [(ngModel)]="dateFrom"
+            [disabled]="loading"
+            class="date-input">
+        </div>
+
+        <div class="filter-item">
+          <label>Hasta</label>
+          <input 
+            type="date" 
+            [(ngModel)]="dateTo"
+            [disabled]="loading"
+            class="date-input">
+        </div>
+
+        <div class="filter-actions">
+          <button 
+            class="btn-primary" 
+            (click)="applyFilters()"
+            [disabled]="loading">
+            Filtrar
+          </button>
+          <button 
+            class="btn-secondary" 
+            (click)="clearFilters()"
+            [disabled]="loading">
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumen -->
+    <div class="summary-section">
+      <div class="summary-card">
+        <div class="summary-icon"><i class="pi pi-calendar"></i></div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.totalDays }}</span>
+          <span class="summary-label">Total días</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon"><i class="pi pi-check"></i></div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.completeDays }}</span>
+          <span class="summary-label">Completos</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon"><i class="pi pi-exclamation-triangle"></i></div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.incompleteDays }}</span>
+          <span class="summary-label">Incompletos</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <div class="summary-icon"><i class="pi pi-clock"></i></div>
+        <div class="summary-content">
+          <span class="summary-value">{{ summary.totalHours }}h</span>
+          <span class="summary-label">Total horas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando registros...</p>
+    </div>
+
+    <!-- Tabla de registros -->
+    <div *ngIf="!loading && records.length > 0" class="table-container">
+      <table class="records-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Día</th>
+            <th>Entrada</th>
+            <th>Salida</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Justificación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of records" class="table-row">
+            <td>
+              <div class="date-cell">
+                <span class="day-number">{{ getDayOfMonth(record.createdAt) }}</span>
+                <span class="month-year">{{ getMonthShort(record.createdAt) }}</span>
+              </div>
+            </td>
+
+            <td>{{ getDayName(record.createdAt) }}</td>
+            <td class="time-cell">{{ formatTime(record.checkIn) }}</td>
+            <td class="time-cell">{{ formatTime(record.checkOut) }}</td>
+            <td class="hours-cell">
+              {{ calculateHours(record.checkIn, record.checkOut) }}
+            </td>
+            <td>
+              <span [class]="getStatusClass(record)" class="status-badge">
+                {{ getStatus(record) }}
+              </span>
+            </td>
+            
+            <td class="justification-cell">
+              <!-- Caso 1: Tiene justificación pendiente (sin enviar) -->
+              <button 
+                *ngIf="needsJustification(record) && !hasJustification(record)"
+                class="justification-btn pending"
+                (click)="openJustificationModal(record)"
+                title="Justificación pendiente - Click para ingresar">
+                <i class="pi pi-exclamation-triangle"></i>
+              </button>
+
+              <!-- Caso 2: Tiene justificación enviada -->
+              <button 
+                *ngIf="hasJustification(record)"
+                class="justification-btn completed"
+                (click)="openJustificationModal(record)"
+                title="Ver justificación enviada">
+                <i class="pi pi-check-circle"></i>
+              </button>
+
+              <!-- Caso 3: No necesita justificación -->
+              <span *ngIf="!needsJustification(record)" class="no-justification">
+                -
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sin registros -->
+    <div *ngIf="!loading && records.length === 0" class="no-records">
+      <div class="no-records-icon">📭</div>
+      <h3>No hay registros</h3>
+      <p>No se encontraron registros de asistencia en el rango de fechas seleccionado.</p>
+    </div>
+
+    <!-- Paginación -->
+    <div *ngIf="!loading && records.length > 0" class="pagination-section">
+      <div class="pagination-info">
+        <span>Mostrando {{ getRecordsRange() }} registros</span>
+        
+        <select 
+          [value]="rowsPerPage" 
+          (change)="onPageSizeChange($event)"
+          class="page-size-select">
+          <option *ngFor="let size of pageSizeOptions" [value]="size">
+            {{ size }} por página
+          </option>
+        </select>
+      </div>
+
+      <div class="pagination-controls">
+        <button 
+          class="page-btn" 
+          (click)="previousPage()"
+          [disabled]="!hasPreviousPage()">
+          ← Anterior
+        </button>
+
+        <span class="page-indicator">
+          Página {{ pageNumber + 1 }} de {{ getTotalPages() }}
+        </span>
+
+        <button 
+          class="page-btn" 
+          (click)="nextPage()"
+          [disabled]="!hasNextPage()">
+          Siguiente →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DE JUSTIFICACIÓN -->
+<app-justification-modal
+  [show]="showJustificationModal"
+  [attendanceRecord]="selectedAttendanceRecord"
+  [justification]="selectedJustification"
+  [isReadOnly]="hasJustification(selectedAttendanceRecord)"
+  (closeModal)="closeJustificationModal()"
+  (submitJustification)="onSubmitJustification($event)">
+</app-justification-modal>

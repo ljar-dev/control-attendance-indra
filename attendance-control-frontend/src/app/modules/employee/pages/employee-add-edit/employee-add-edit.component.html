@@ -1,0 +1,182 @@
+<div class="employee-form-wrapper">
+  <div class="employee-form-container">
+    
+    <div class="form-header">
+      <h1>{{ isEditMode ? 'Editar Empleado' : 'Nuevo Empleado' }}</h1>
+      <p>{{ isEditMode ? 'Actualiza los datos del empleado' : 'Completa los datos del nuevo empleado' }}</p>
+    </div>
+
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando datos...</p>
+    </div>
+
+    <form *ngIf="!loading" [formGroup]="employeeForm" (ngSubmit)="onSubmit()" class="employee-form">
+      
+      <div class="form-section">
+        <h2 class="section-title">Información Personal</h2>
+        
+        <div class="form-grid">
+          <app-input-field
+            label="Nombre"
+            placeholder="Ingresa el nombre"
+            formControlName="firstName"
+            [required]="true"
+            [hasError]="hasError('firstName')"
+            [errorMessage]="getErrorMessage('firstName')">
+          </app-input-field>
+
+          <app-input-field
+            label="Apellido"
+            placeholder="Ingresa el apellido"
+            formControlName="lastName"
+            [required]="true"
+            [hasError]="hasError('lastName')"
+            [errorMessage]="getErrorMessage('lastName')">
+          </app-input-field>
+
+          <app-input-field
+            label="Departamento"
+            placeholder="Ej: Recursos Humanos"
+            formControlName="department"
+            [required]="true"
+            [hasError]="hasError('department')"
+            [errorMessage]="getErrorMessage('department')">
+          </app-input-field>
+
+          <app-input-field
+            label="Cargo"
+            placeholder="Ej: Desarrollador"
+            formControlName="position"
+            [required]="true"
+            [hasError]="hasError('position')"
+            [errorMessage]="getErrorMessage('position')">
+          </app-input-field>
+
+          <app-input-field
+            label="Fecha de Contratación"
+            type="date"
+            formControlName="hireDate"
+            [required]="true"
+            [hasError]="hasError('hireDate')"
+            [errorMessage]="getErrorMessage('hireDate')">
+          </app-input-field>
+
+          <!-- <div class="checkbox-field">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                formControlName="enabled"
+                class="checkbox-input">
+              <span>Empleado activo</span>
+            </label>
+            <span class="helper-text">Indica si el empleado está actualmente activo en la empresa</span>
+          </div> -->
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-header">
+          <h2 class="section-title">Horarios de Trabajo</h2>
+          <button 
+            type="button" 
+            class="btn-add-schedule"
+            (click)="addWorkSchedule()"
+            [disabled]="submitting">
+            <i class="pi pi-plus"></i> Agregar Horario
+          </button>
+        </div>
+
+        <div class="schedules-container" formArrayName="workSchedules">
+          <div 
+            *ngFor="let schedule of workSchedules.controls; let i = index" 
+            [formGroupName]="i"
+            class="schedule-card">
+            
+            <div class="schedule-header">
+              <span class="schedule-number">
+                <i class="pi pi-calendar"></i> Horario {{ i + 1 }}
+              </span>
+              <button 
+                type="button" 
+                class="btn-remove-schedule"
+                (click)="removeWorkSchedule(i)"
+                [disabled]="workSchedules.length === 1 || submitting"
+                title="Eliminar horario">
+                <i class="pi pi-trash"></i>
+              </button>
+            </div>
+
+            <div class="schedule-grid">
+              <app-select
+                label="Día de la semana"
+                [options]="daysOfWeek"
+                optionLabel="label"
+                optionValue="value"
+                formControlName="dayOfWeek"
+                [required]="true">
+              </app-select>
+
+              <app-input-field
+                label="Hora de inicio"
+                type="time"
+                formControlName="startTime"
+                [required]="true">
+              </app-input-field>
+
+              <app-input-field
+                label="Hora de fin"
+                type="time"
+                formControlName="endTime"
+                [required]="true">
+              </app-input-field>
+
+              <!-- <div class="checkbox-field">
+                <label class="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    formControlName="enabled"
+                    class="checkbox-input">
+                  <span>Horario activo</span>
+                </label>
+              </div> -->
+            </div>
+          </div>
+
+          <div *ngIf="workSchedules.length === 0" class="no-schedules">
+            <p>No hay horarios configurados</p>
+            <button 
+              type="button" 
+              class="btn-add-schedule"
+              (click)="addWorkSchedule()">
+              Agregar Primer Horario
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn-cancel"
+          (click)="onCancel()"
+          [disabled]="submitting">
+          Cancelar
+        </button>
+
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [disabled]="submitting || employeeForm.invalid">
+          <span *ngIf="!submitting">
+            {{ isEditMode ? 'Actualizar Empleado' : 'Crear Empleado' }}
+          </span>
+          <span *ngIf="submitting">
+            Guardando...
+          </span>
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>

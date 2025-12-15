@@ -1,0 +1,40 @@
+<div class="select-wrapper">
+  <label class="select-label" *ngIf="label">
+    {{ label }}
+    <span class="required" *ngIf="required">*</span>
+  </label>
+  
+  <div class="select-container" [class.disabled]="disabled" [class.error]="hasError">
+    <select 
+      class="select-input"
+      [(ngModel)]="value"
+      [disabled]="disabled"
+      (change)="onChange($event)"
+      (blur)="onTouched()">
+      
+      <option value="" disabled selected *ngIf="placeholder">
+        {{ placeholder }}
+      </option>
+      
+      <option 
+        *ngFor="let option of options" 
+        [value]="getOptionValue(option)">
+        {{ getOptionLabel(option) }}
+      </option>
+    </select>
+    
+    <span class="select-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </div>
+  
+  <span class="error-message" *ngIf="hasError && errorMessage">
+    {{ errorMessage }}
+  </span>
+  
+  <span class="helper-text" *ngIf="!hasError && helperText">
+    {{ helperText }}
+  </span>
+</div>

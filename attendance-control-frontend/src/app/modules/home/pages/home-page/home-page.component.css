@@ -1,0 +1,207 @@
+/* ========================================
+   CONTENEDOR PRINCIPAL
+   ======================================== */
+.home-container {
+  display: flex;
+  min-height: 100vh;
+  background: #fafbfc;
+}
+
+/* ========================================
+   MAIN CONTENT (Minimalista)
+   ======================================== */
+.main-content {
+  margin-left: 260px; /* Ancho del sidebar */
+  flex: 1;
+  background: #fafbfc;
+  min-height: 100vh;
+  padding: 2rem;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: hidden;
+}
+
+/* Cuando el sidebar está colapsado */
+:host ::ng-deep .sidebar.collapsed ~ .main-content {
+  margin-left: 72px;
+}
+
+/* ========================================
+   ESTILOS GLOBALES PARA PÁGINAS
+   ======================================== */
+
+/* Page Header */
+.main-content :deep(.page-header) {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.main-content :deep(.page-header h1) {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.main-content :deep(.page-header p) {
+  font-size: 0.938rem;
+  color: #6b7280;
+  margin: 0.5rem 0 0 0;
+}
+
+/* Cards minimalistas */
+.main-content :deep(.card) {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.main-content :deep(.card:hover) {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+}
+
+/* Botones minimalistas */
+.main-content :deep(.btn) {
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.main-content :deep(.btn-primary) {
+  background: #3b82f6;
+  color: white;
+}
+
+.main-content :deep(.btn-primary:hover) {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.main-content :deep(.btn-secondary) {
+  background: white;
+  color: #374151;
+  border-color: #d1d5db;
+}
+
+.main-content :deep(.btn-secondary:hover) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.main-content :deep(.btn-danger) {
+  background: #ef4444;
+  color: white;
+}
+
+.main-content :deep(.btn-danger:hover) {
+  background: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Tablas minimalistas */
+.main-content :deep(.table) {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.main-content :deep(.table th) {
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.main-content :deep(.table td) {
+  padding: 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.main-content :deep(.table tbody tr:hover) {
+  background: #f9fafb;
+}
+
+/* Badges minimalistas */
+.main-content :deep(.badge) {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.main-content :deep(.badge-success) {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.main-content :deep(.badge-warning) {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.main-content :deep(.badge-danger) {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.main-content :deep(.badge-info) {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}
+
+/* ========================================
+   ANIMACIONES
+   ======================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-content > * {
+  animation: fadeIn 0.4s ease-out;
+}

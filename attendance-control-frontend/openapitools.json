@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.2.0",
+    "generators": {
+      "angular-client": {
+        "generatorName": "typescript-angular",
+        "output": "./src/app/generated/api",
+        "glob": "./api-specs/openapi.yaml",
+        "additionalProperties": {
+          "npmName": "api-client",
+          "npmVersion": "1.0.0",
+          "ngVersion": "17.0.0",
+          "snapshot": false,
+          "providedInRoot": true,
+          "withInterfaces": true,
+          "useSingleRequestParameter": true
+        }
+      }
+    }
+  }
+}

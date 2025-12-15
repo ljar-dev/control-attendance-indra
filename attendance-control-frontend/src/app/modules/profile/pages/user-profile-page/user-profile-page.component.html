@@ -1,0 +1,237 @@
+<div class="profile-wrapper">
+  <div class="profile-container">
+    
+    <!-- Header -->
+    <div class="profile-header">
+      <h1>Mi Perfil</h1>
+      <p>Información de tu cuenta</p>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando perfil...</p>
+    </div>
+
+    <!-- Contenido del perfil -->
+    <div *ngIf="!loading && currentUser" class="profile-content">
+      
+      <!-- Tarjeta de Usuario -->
+      <div class="user-card">
+        <div class="user-avatar-large">
+          {{ getInitials() }}
+        </div>
+        <div class="user-info-main">
+          <h2>{{ getFullName() }}</h2>
+          <p class="user-username">@{{ currentUser.username }}</p>
+          <div class="user-roles">
+            <span class="role-badge" *ngFor="let role of getRolesDisplay()">
+              <i class="pi pi-shield"></i> {{ role }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información Básica -->
+      <div class="info-section">
+        <div class="section-header">
+          <h3><i class="pi pi-user"></i> Información Personal</h3>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Nombre:</span>
+            <span class="info-value">{{ currentUser.firstName || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Apellido:</span>
+            <span class="info-value">{{ currentUser.lastName || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Código de Empleado:</span>
+            <span class="info-value">{{ currentUser.employeeCode || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">ID de Empleado:</span>
+            <span class="info-value">{{ currentUser.employeeId || '-' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Información Laboral -->
+      <div class="info-section">
+        <div class="section-header">
+          <h3><i class="pi pi-briefcase"></i> Información Laboral</h3>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Departamento:</span>
+            <span class="info-value">{{ currentUser.department || '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Cargo:</span>
+            <span class="info-value">{{ currentUser.position || '-' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seguridad - Cambiar Contraseña -->
+      <div class="info-section">
+        <div class="section-header">
+          <h3><i class="pi pi-lock"></i> Seguridad</h3>
+        </div>
+        <div class="security-section">
+          <div class="security-info">
+            <i class="pi pi-key"></i>
+            <div>
+              <p class="security-title">Contraseña</p>
+              <p class="security-description">
+                Cambia tu contraseña regularmente para mantener tu cuenta segura
+              </p>
+            </div>
+          </div>
+          <button class="btn-change-password" (click)="openPasswordModal()">
+            <i class="pi pi-pencil"></i> Cambiar Contraseña
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sin datos -->
+    <div *ngIf="!loading && !currentUser" class="no-data">
+      <div class="no-data-icon"><i class="pi pi-exclamation-triangle"></i></div>
+      <h3>No se pudo cargar el perfil</h3>
+      <p>Por favor, intenta cerrar sesión e iniciar sesión nuevamente</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL DE CAMBIO DE CONTRASEÑA -->
+<div class="modal-backdrop" *ngIf="showPasswordModal" (click)="closePasswordModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <!-- Header del Modal -->
+    <div class="modal-header">
+      <div class="modal-title-section">
+        <i class="pi pi-key"></i>
+        <h2>Cambiar Contraseña</h2>
+      </div>
+      <button class="close-btn" (click)="closePasswordModal()" type="button">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      
+      <!-- Contraseña Actual -->
+      <div class="form-group">
+        <label for="currentPassword">
+          <i class="pi pi-lock"></i> Contraseña Actual
+          <span class="required">*</span>
+        </label>
+        <div class="password-input-wrapper">
+          <input 
+            id="currentPassword"
+            [type]="showCurrentPassword ? 'text' : 'password'"
+            formControlName="currentPassword"
+            class="form-input"
+            placeholder="Ingresa tu contraseña actual">
+          <button 
+            type="button"
+            class="toggle-password-btn"
+            (click)="togglePasswordVisibility('current')"
+            [title]="showCurrentPassword ? 'Ocultar' : 'Mostrar'">
+            <i [class]="showCurrentPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+          </button>
+        </div>
+        <span class="error-message" *ngIf="hasPasswordError('currentPassword')">
+          <i class="pi pi-exclamation-circle"></i>
+          {{ getPasswordErrorMessage('currentPassword') }}
+        </span>
+      </div>
+
+      <!-- Nueva Contraseña -->
+      <div class="form-group">
+        <label for="newPassword">
+          <i class="pi pi-lock"></i> Nueva Contraseña
+          <span class="required">*</span>
+        </label>
+        <div class="password-input-wrapper">
+          <input 
+            id="newPassword"
+            [type]="showNewPassword ? 'text' : 'password'"
+            formControlName="newPassword"
+            class="form-input"
+            placeholder="Ingresa tu nueva contraseña">
+          <button 
+            type="button"
+            class="toggle-password-btn"
+            (click)="togglePasswordVisibility('new')"
+            [title]="showNewPassword ? 'Ocultar' : 'Mostrar'">
+            <i [class]="showNewPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+          </button>
+        </div>
+        <span class="error-message" *ngIf="hasPasswordError('newPassword')">
+          <i class="pi pi-exclamation-circle"></i>
+          {{ getPasswordErrorMessage('newPassword') }}
+        </span>
+        <span class="helper-text">
+          <i class="pi pi-info-circle"></i>
+          Debe tener al menos 6 caracteres
+        </span>
+      </div>
+
+      <!-- Confirmar Contraseña -->
+      <div class="form-group">
+        <label for="confirmPassword">
+          <i class="pi pi-shield-check"></i> Confirmar Nueva Contraseña
+          <span class="required">*</span>
+        </label>
+        <div class="password-input-wrapper">
+          <input 
+            id="confirmPassword"
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            class="form-input"
+            placeholder="Confirma tu nueva contraseña">
+          <button 
+            type="button"
+            class="toggle-password-btn"
+            (click)="togglePasswordVisibility('confirm')"
+            [title]="showConfirmPassword ? 'Ocultar' : 'Mostrar'">
+            <i [class]="showConfirmPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+          </button>
+        </div>
+        <span class="error-message" *ngIf="hasPasswordError('confirmPassword')">
+          <i class="pi pi-exclamation-circle"></i>
+          {{ getPasswordErrorMessage('confirmPassword') }}
+        </span>
+      </div>
+
+      <!-- Botones -->
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn-cancel"
+          (click)="closePasswordModal()"
+          [disabled]="submittingPassword">
+          <i class="pi pi-x-circle"></i>
+          Cancelar
+        </button>
+
+        <button 
+          type="submit" 
+          class="btn-submit"
+          [disabled]="passwordForm.invalid || submittingPassword">
+          <i class="pi pi-check-circle" *ngIf="!submittingPassword"></i>
+          <i class="pi pi-spinner spin" *ngIf="submittingPassword"></i>
+          <span *ngIf="!submittingPassword">Cambiar Contraseña</span>
+          <span *ngIf="submittingPassword">Cambiando...</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

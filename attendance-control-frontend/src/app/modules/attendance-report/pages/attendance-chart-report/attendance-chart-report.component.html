@@ -1,0 +1,204 @@
+<div class="report-wrapper">
+  <div class="report-container">
+    
+    <!-- Header -->
+    <div class="report-header">
+      <h1>Reportes Generales</h1>
+      <p>Estadísticas de asistencia y justificaciones</p>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+      <div class="filters-grid">
+        <div class="filter-item">
+          <label>Desde</label>
+          <input 
+            type="date" 
+            [(ngModel)]="dateFrom"
+            [disabled]="loading"
+            class="date-input">
+        </div>
+
+        <div class="filter-item">
+          <label>Hasta</label>
+          <input 
+            type="date" 
+            [(ngModel)]="dateTo"
+            [disabled]="loading"
+            class="date-input">
+        </div>
+
+        <div class="filter-actions">
+          <button 
+            class="btn-primary" 
+            (click)="applyFilters()"
+            [disabled]="loading">
+            <i class="pi pi-filter"></i>
+            Filtrar
+          </button>
+          <button 
+            class="btn-secondary" 
+            (click)="clearFilters()"
+            [disabled]="loading">
+            <i class="pi pi-filter-slash"></i>
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Generando reporte...</p>
+    </div>
+
+    <!-- Contenido del reporte -->
+    <div *ngIf="!loading && reportData" class="report-content">
+      
+      <!-- Resumen general -->
+      <div class="summary-section">
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="pi pi-calendar"></i>
+          </div>
+          <div class="summary-content">
+            <span class="summary-value">{{ reportData?.totalRecords || 0 }}</span>
+            <span class="summary-label">Total Registros</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="pi pi-users"></i>
+          </div>
+          <div class="summary-content">
+            <span class="summary-value">{{ reportData?.totalEmployees || 0 }}</span>
+            <span class="summary-label">Empleados</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="pi pi-calendar-minus"></i>
+          </div>
+          <div class="summary-content">
+            <span class="summary-value">
+              {{ formatDateDisplay(reportData?.startDate!) }}
+            </span>
+            <span class="summary-label">Desde</span>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="summary-icon">
+            <i class="pi pi-calendar-plus"></i>
+          </div>
+          <div class="summary-content">
+            <span class="summary-value">
+              {{ formatDateDisplay(reportData?.endDate!) }}
+            </span>
+            <span class="summary-label">Hasta</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráficas -->
+      <div class="charts-section">
+        
+        <!-- Gráfica de Asistencias -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>
+              <i class="pi pi-chart-pie"></i>
+              Estado de Asistencias
+            </h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="attendanceChart"></canvas>
+          </div>
+          <div class="chart-stats" *ngIf="reportData?.attendanceStats">
+            <div class="stat-item">
+              <div class="stat-color" style="background: #10b981;"></div>
+              <span class="stat-label">Puntuales:</span>
+              <span class="stat-value">
+                {{ reportData.attendanceStats.onTime || 0 }} 
+                ({{ reportData.attendanceStats.onTimePercentage || 0 }}%)
+              </span>
+            </div>
+            <div class="stat-item">
+              <div class="stat-color" style="background: #f59e0b;"></div>
+              <span class="stat-label">Tarde:</span>
+              <span class="stat-value">
+                {{ reportData.attendanceStats.late || 0 }} 
+                ({{ reportData.attendanceStats.latePercentage || 0 }}%)
+              </span>
+            </div>
+            <div class="stat-item">
+              <div class="stat-color" style="background: #ef4444;"></div>
+              <span class="stat-label">Ausencias:</span>
+              <span class="stat-value">
+                {{ reportData.attendanceStats.absent || 0 }} 
+                ({{ reportData.attendanceStats.absentPercentage || 0 }}%)
+              </span>
+            </div>
+            <div class="stat-item">
+              <div class="stat-color" style="background: #f97316;"></div>
+              <span class="stat-label">Salida Temprana:</span>
+              <span class="stat-value">
+                {{ reportData.attendanceStats.earlyDeparture || 0 }} 
+                ({{ reportData.attendanceStats.earlyDeparturePercentage || 0 }}%)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfica de Justificaciones -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>
+              <i class="pi pi-chart-pie"></i>
+              Estado de Justificaciones
+            </h3>
+          </div>
+          <div class="chart-container">
+            <canvas id="justificationChart"></canvas>
+          </div>
+          <div class="chart-stats" *ngIf="reportData?.justificationStats">
+            <div class="stat-item">
+              <div class="stat-color" style="background: #3b82f6;"></div>
+              <span class="stat-label">Justificadas:</span>
+              <span class="stat-value">
+                {{ reportData.justificationStats.justified || 0 }} 
+                ({{ reportData.justificationStats.justifiedPercentage || 0 }}%)
+              </span>
+            </div>
+            <div class="stat-item">
+              <div class="stat-color" style="background: #94a3b8;"></div>
+              <span class="stat-label">Pendientes:</span>
+              <span class="stat-value">
+                {{ reportData.justificationStats.notJustified || 0 }} 
+                ({{ reportData.justificationStats.notJustifiedPercentage || 0 }}%)
+              </span>
+            </div>
+            <div class="stat-item total">
+              <span class="stat-label">Total Requeridas:</span>
+              <span class="stat-value">
+                {{ reportData.justificationStats.totalRequired || 0 }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sin datos -->
+    <div *ngIf="!loading && !reportData" class="no-data">
+      <div class="no-data-icon">📊</div>
+      <h3>No hay datos</h3>
+      <p>Selecciona un rango de fechas y haz clic en Filtrar para ver el reporte</p>
+    </div>
+
+  </div>
+</div>

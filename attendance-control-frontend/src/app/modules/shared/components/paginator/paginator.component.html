@@ -1,0 +1,61 @@
+<div class="paginator-container" *ngIf="totalPages > 1">
+  <div class="paginator-info">
+    <span class="info-text">
+      Mostrando {{ startItem }} - {{ endItem }} de {{ totalItems }} registros
+    </span>
+  </div>
+
+  <div class="paginator-controls">
+    <button 
+      class="paginator-btn"
+      [disabled]="currentPage === 1"
+      (click)="goToFirstPage()">
+      <span>«</span>
+    </button>
+
+    <button 
+      class="paginator-btn"
+      [disabled]="currentPage === 1"
+      (click)="previousPage()">
+      <span>‹</span>
+    </button>
+
+    <div class="paginator-pages">
+      <button
+        *ngFor="let page of visiblePages"
+        class="paginator-page"
+        [class.active]="page === currentPage"
+        [class.dots]="page === -1"
+        [disabled]="page === -1"
+        (click)="goToPage(page)">
+        {{ page === -1 ? '...' : page }}
+      </button>
+    </div>
+
+    <button 
+      class="paginator-btn"
+      [disabled]="currentPage === totalPages"
+      (click)="nextPage()">
+      <span>›</span>
+    </button>
+
+    <button 
+      class="paginator-btn"
+      [disabled]="currentPage === totalPages"
+      (click)="goToLastPage()">
+      <span>»</span>
+    </button>
+  </div>
+
+  <div class="paginator-size">
+    <label>
+      <span>Items por página:</span>
+      <select class="size-select" [value]="pageSize" (change)="onPageSizeChange($event)">
+        <option [value]="5">5</option>
+        <option [value]="10">10</option>
+        <option [value]="20">20</option>
+        <option [value]="50">50</option>
+      </select>
+    </label>
+  </div>
+</div>

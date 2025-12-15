@@ -1,0 +1,74 @@
+<div class="attendance-wrapper">
+  <div class="attendance-card">
+    
+    <!-- Header -->
+    <div class="card-header">
+      <h1>Registro de Asistencia</h1>
+      <p>Marca tu entrada o salida del día</p>
+    </div>
+
+    <!-- Fecha y Hora en fila -->
+    <div class="datetime-row">
+      <div class="datetime-item">
+        <span class="label"><i class="bi bi-calendar3"></i> Fecha</span>
+        <span class="value">{{ currentDate }}</span>
+      </div>
+      <div class="datetime-item">
+        <span class="label"><i class="bi bi-clock"></i> Hora</span>
+        <span class="value">{{ currentTime }}</span>
+      </div>
+    </div>
+
+    <!-- Información del empleado (desde token) -->
+    <div class="employee-section">
+      <div class="avatar">{{ getInitials() }}</div>
+      <div class="employee-info">
+        <h2>{{ getFullName() }}</h2>
+        <p class="employee-position">{{ getPosition() }}</p>
+        <p class="employee-code" *ngIf="currentUser?.employeeCode">
+          <i class="bi bi-person-badge"></i> {{ currentUser!.employeeCode! }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Registros del día -->
+    <div class="records-section">
+      <div class="record-item entry">
+        <div class="record-icon">
+          <i class="pi pi-sign-in"></i>
+        </div>
+        <div class="record-content">
+          <span class="record-label">Entrada</span>
+          <span class="record-value" *ngIf="lastRecord.entry">{{ lastRecord.entry }}</span>
+          <span class="record-empty" *ngIf="!lastRecord.entry">Sin registro</span>
+        </div>
+      </div>
+
+      <div class="record-item exit">
+        <div class="record-icon">
+          <i class="pi pi-sign-out"></i>
+        </div>
+        <div class="record-content">
+          <span class="record-label">Salida</span>
+          <span class="record-value" *ngIf="lastRecord.exit">{{ lastRecord.exit }}</span>
+          <span class="record-empty" *ngIf="!lastRecord.exit">Sin registro</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón de acción (solo si NO está completo) -->
+    <div class="action-section" *ngIf="!isComplete">
+      <button 
+        class="btn-attendance" 
+        [class.btn-entry]="!hasCheckedIn"
+        [class.btn-exit]="hasCheckedIn"
+        [disabled]="isProcessing"
+        (click)="markAttendance()">
+        <i class="bi bi-check-circle" *ngIf="!isProcessing"></i>
+        <i class="bi bi-arrow-repeat spin" *ngIf="isProcessing"></i>
+        <span>{{ isProcessing ? loadingText : buttonLabel }}</span>
+      </button>
+    </div>
+
+  </div>
+</div>

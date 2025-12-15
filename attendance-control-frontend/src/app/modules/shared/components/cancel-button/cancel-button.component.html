@@ -1,0 +1,9 @@
+<button 
+  class="cancel-btn" 
+  [disabled]="disabled"
+  type="button">
+  <span class="btn-content">
+    <span class="btn-icon" *ngIf="icon">{{ icon }}</span>
+    <span class="btn-text">{{ label }}</span>
+  </span>
+</button>

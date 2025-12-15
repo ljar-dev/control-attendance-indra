@@ -1,0 +1,145 @@
+.paginator-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-radius: 12px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.paginator-info {
+  flex: 1;
+  min-width: 200px;
+}
+
+.info-text {
+  font-size: 14px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  opacity: 0.8;
+}
+
+.paginator-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.paginator-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.paginator-btn:hover:not(:disabled) {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.paginator-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.paginator-pages {
+  display: flex;
+  gap: 4px;
+}
+
+.paginator-page {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1.5px solid #d1d5db;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.paginator-page:hover:not(:disabled):not(.active) {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.paginator-page.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+.paginator-page.dots {
+  border: none;
+  cursor: default;
+  background: transparent;
+}
+
+.paginator-page:disabled {
+  cursor: default;
+}
+
+.paginator-size {
+  display: flex;
+  align-items: center;
+}
+
+.paginator-size label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.size-select {
+  padding: 6px 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #ffffff;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  transition: all 0.2s;
+}
+
+.size-select:hover {
+  border-color: #9ca3af;
+}
+
+.size-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .paginator-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .paginator-info,
+  .paginator-controls,
+  .paginator-size {
+    justify-content: center;
+  }
+
+  .paginator-pages {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,14 @@
+<button 
+  class="confirm-btn" 
+  [disabled]="disabled"
+  [class.loading]="loading"
+  type="button">
+  <span class="btn-content" *ngIf="!loading">
+    <span class="btn-icon" *ngIf="icon">{{ icon }}</span>
+    <span class="btn-text">{{ label }}</span>
+  </span>
+  <span class="btn-loader" *ngIf="loading">
+    <span class="spinner"></span>
+    <span class="btn-text">{{ loadingText }}</span>
+  </span>
+</button>

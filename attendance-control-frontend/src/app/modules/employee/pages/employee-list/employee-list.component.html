@@ -1,0 +1,215 @@
+<div class="employee-list-wrapper">
+  <div class="employee-list-container">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1>Empleados</h1>
+        <p>Gestión de empleados de la empresa</p>
+      </div>
+      <button class="btn-create" (click)="createEmployee()">
+        <span class="icon"><i class="pi pi-plus"></i></span>
+        Nuevo Empleado
+      </button>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="pi pi-users"></i></div>
+        <div class="stat-content">
+          <span class="stat-value">{{ stats.total }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon"><i class="pi pi-check"></i></div>
+        <div class="stat-content">
+          <span class="stat-value">{{ stats.active }}</span>
+          <span class="stat-label">Activos</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon"><i class="pi pi-pause-circle"></i></div>
+        <div class="stat-content">
+          <span class="stat-value">{{ stats.inactive }}</span>
+          <span class="stat-label">Inactivos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters-section">
+      <div class="filters-row">
+        <!-- Búsqueda -->
+        <div class="filter-item search-box">
+          <span class="search-icon"><i class="pi pi-search"></i></span>
+          <input 
+            type="text" 
+            placeholder="Buscar por nombre o código..."
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="applyFilters()"
+            [disabled]="loading">
+        </div>
+
+        <!-- Filtro de departamento -->
+        <div class="filter-item">
+          <select 
+            class="filter-select"
+            [(ngModel)]="departmentFilter"
+            [disabled]="loading">
+            <option value="">Todos los departamentos</option>
+            <option *ngFor="let dept of departments" [value]="dept">
+              {{ dept }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtro de estado -->
+        <div class="filter-item">
+          <select 
+            class="filter-select"
+            [(ngModel)]="statusFilter"
+            [disabled]="loading">
+            <option value="all">Todos los estados</option>
+            <option value="active">Activos</option>
+            <option value="inactive">Inactivos</option>
+          </select>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="filter-actions">
+          <button 
+            class="btn-filter" 
+            (click)="applyFilters()"
+            [disabled]="loading">
+            <i class="pi pi-filter"></i>
+            Filtrar
+          </button>
+          
+          <button 
+            class="btn-clear" 
+            (click)="clearFilters()"
+            [disabled]="loading">
+            <i class="pi pi-filter-slash"></i>
+            Limpiar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="loading-container">
+      <div class="spinner"></div>
+      <p>Cargando empleados...</p>
+    </div>
+
+    <!-- Tabla de empleados -->
+    <div *ngIf="!loading && employees.length > 0" class="table-container">
+      <table class="employees-table">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Código</th>
+            <th>Cargo</th>
+            <th>Departamento</th>
+            <th>F. Contratación</th>
+            <th>Antiguedad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employee of employees" class="table-row">
+            <td>
+              <div class="employee-cell">
+                <div class="employee-avatar">
+                  {{ getInitials(employee) }}
+                </div>
+                <div class="employee-info">
+                  <span class="employee-name">{{ employee.firstName }} {{ employee.lastName }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="code-cell">{{ employee.employeeCode }}</td>
+            <td>{{ employee.position || '-' }}</td>
+            <td>{{ employee.department || '-' }}</td>
+            <td>{{ formatHireDate(employee.hireDate) }}</td>
+            <td>{{ getTimeEmployed(employee.hireDate)  }}</td>
+            <td>
+              <span [class]="getStatusClass(employee)" class="status-badge">
+                {{ getStatusText(employee) }}
+              </span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button 
+                  class="action-btn action-edit" 
+                  (click)="editEmployee(employee)"
+                  title="Editar">
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button 
+                  class="action-btn action-toggle" 
+                  (click)="toggleEmployeeStatus(employee)"
+                  [title]="employee.enabled ? 'Desactivar' : 'Activar'">
+                  <i *ngIf="employee.enabled" class="pi pi-pause-circle"></i>
+                  <i *ngIf="!employee.enabled" class="pi pi-play"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sin resultados -->
+    <div *ngIf="!loading && employees.length === 0" class="no-results">
+      <div class="no-results-icon"><i class="pi pi-search"></i></div>
+      <h3>No se encontraron empleados</h3>
+      <p>No hay empleados que coincidan con los filtros seleccionados.</p>
+      <button class="btn-clear" (click)="clearFilters()">
+        Limpiar filtros
+      </button>
+    </div>
+
+    <!-- Paginación -->
+    <div *ngIf="!loading && employees.length > 0" class="pagination-section">
+      <div class="pagination-info">
+        <span>Mostrando {{ getRecordsRange() }} registros</span>
+        
+        <select 
+          [value]="rowsPerPage" 
+          (change)="onPageSizeChange($event)"
+          class="page-size-select">
+          <option *ngFor="let size of pageSizeOptions" [value]="size">
+            {{ size }} por página
+          </option>
+        </select>
+      </div>
+
+      <div class="pagination-controls">
+        <button 
+          class="page-btn" 
+          (click)="previousPage()"
+          [disabled]="!hasPreviousPage()">
+          ← Anterior
+        </button>
+
+        <span class="page-indicator">
+          Página {{ pageNumber + 1 }} de {{ getTotalPages() }}
+        </span>
+
+        <button 
+          class="page-btn" 
+          (click)="nextPage()"
+          [disabled]="!hasNextPage()">
+          Siguiente →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

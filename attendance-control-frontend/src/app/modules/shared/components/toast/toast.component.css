@@ -1,0 +1,121 @@
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.toast-container.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast {
+  min-width: 320px;
+  max-width: 400px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: start;
+  gap: 14px;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.toast::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--toast-color);
+}
+
+.toast[data-type="success"] {
+  --toast-color: #10b981;
+  --toast-bg: #d1fae5;
+}
+
+.toast[data-type="error"] {
+  --toast-color: #ef4444;
+  --toast-bg: #fee2e2;
+}
+
+.toast[data-type="warning"] {
+  --toast-color: #f59e0b;
+  --toast-bg: #fef3c7;
+}
+
+.toast[data-type="info"] {
+  --toast-color: #3b82f6;
+  --toast-bg: #dbeafe;
+}
+
+.toast-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--toast-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon {
+  font-size: 20px;
+  color: var(--toast-color);
+  font-weight: 600;
+}
+
+.toast-content {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.toast-title {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.toast-message {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.toast-close:hover {
+  background: #f3f4f6;
+  color: #4b5563;
+}

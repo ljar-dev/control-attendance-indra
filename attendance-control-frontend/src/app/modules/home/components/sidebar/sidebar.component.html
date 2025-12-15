@@ -1,0 +1,102 @@
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  
+  <!-- Logo / Header -->
+  <div class="sidebar-header">
+    <div class="logo">
+      <i class="bi bi-calendar-check-fill"></i>
+      <span class="logo-text" *ngIf="!isCollapsed">Control de Asistencias</span>
+    </div>
+    <button class="toggle-btn" (click)="toggleSidebar()">
+      <i class="bi" [class.bi-list]="isCollapsed" [class.bi-x]="!isCollapsed"></i>
+    </button>
+  </div>
+
+  <!-- User Info -->
+  <div class="user-info" *ngIf="currentUser">
+    <div class="user-avatar">
+      <i class="pi pi-user"></i>
+    </div>
+    <div class="user-details" *ngIf="!isCollapsed">
+      <p class="user-name">{{ currentUser.firstName }} {{ currentUser.lastName }}</p>
+      <p class="user-role">{{ currentUser.employeeCode }}</p>
+    </div>
+  </div>
+
+  <div class="sidebar-divider"></div>
+
+  <!-- Main Menu -->
+  <div class="sidebar-menu">
+    <div class="menu-section" *ngFor="let section of mainMenu">
+      <h3 class="section-title" *ngIf="section.title && !isCollapsed">{{ section.title }}</h3>
+      
+      <ul class="menu-list">
+        <li 
+          *ngFor="let item of section.items"
+          class="menu-item"
+          [class.active]="isActive(item.router!)"
+          (click)="navigate(item)"
+          [title]="item.name">
+          
+          <div class="menu-item-content">
+            <i class="bi" [ngClass]="item.icon"></i>
+            <span class="menu-label" *ngIf="!isCollapsed">{{ item.name }}</span>
+            <span class="badge" *ngIf="item.badge && !isCollapsed">{{ item.badge }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Admin Menu -->
+    <div class="menu-section" *ngFor="let section of adminMenu">
+      <div class="sidebar-divider"></div>
+      <h3 class="section-title" *ngIf="section.title && !isCollapsed">{{ section.title }}</h3>
+      
+      <ul class="menu-list">
+        <li 
+          *ngFor="let item of section.items"
+          class="menu-item"
+          [class.active]="isActive(item.router!)"
+          (click)="navigate(item)"
+          [title]="item.name">
+          
+          <div class="menu-item-content">
+            <i class="bi" [ngClass]="item.icon"></i>
+            <span class="menu-label" *ngIf="!isCollapsed">{{ item.name }}</span>
+            <span class="badge" *ngIf="item.badge && !isCollapsed">{{ item.badge }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- User Menu -->
+    <div class="menu-section" *ngFor="let section of userMenu">
+      <div class="sidebar-divider"></div>
+      <h3 class="section-title" *ngIf="section.title && !isCollapsed">{{ section.title }}</h3>
+      
+      <ul class="menu-list">
+        <li 
+          *ngFor="let item of section.items"
+          class="menu-item"
+          [class.active]="isActive(item.router!)"
+          (click)="navigate(item)"
+          [title]="item.name">
+          
+          <div class="menu-item-content">
+            <i class="bi" [ngClass]="item.icon"></i>
+            <span class="menu-label" *ngIf="!isCollapsed">{{ item.name }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Logout Button (al final) -->
+  <div class="sidebar-footer">
+    <div class="sidebar-divider"></div>
+    <button class="logout-btn" (click)="logout()" [title]="'Cerrar Sesión'">
+      <i class="bi bi-box-arrow-right"></i>
+      <span *ngIf="!isCollapsed">Cerrar Sesión</span>
+    </button>
+  </div>
+
+</div>
