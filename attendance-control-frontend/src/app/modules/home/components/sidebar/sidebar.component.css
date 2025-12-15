@@ -81,6 +81,10 @@
   color: var(--sidebar-text);
 }
 
+.logo-text span{
+  font-size: 100px;
+}
+
 .sidebar.collapsed .logo-text {
   opacity: 0;
   width: 0;

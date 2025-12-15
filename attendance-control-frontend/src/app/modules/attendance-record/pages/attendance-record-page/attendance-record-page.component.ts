@@ -87,7 +87,6 @@ export class AttendanceRecordPageComponent implements OnInit, OnDestroy {
   updateDateTime() {
     const now = new Date();
 
-    // Formato: Lunes, 07 de Diciembre 2025
     this.currentDate = now.toLocaleDateString('es-ES', {
       weekday: 'long',
       day: '2-digit',
@@ -95,7 +94,6 @@ export class AttendanceRecordPageComponent implements OnInit, OnDestroy {
       year: 'numeric'
     });
 
-    // Formato: 14:30:45
     this.currentTime = now.toLocaleTimeString('es-ES', {
       hour: '2-digit',
       minute: '2-digit',

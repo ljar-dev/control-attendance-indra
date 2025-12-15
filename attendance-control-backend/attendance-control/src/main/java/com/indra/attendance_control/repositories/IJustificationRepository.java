@@ -39,13 +39,16 @@ public interface IJustificationRepository extends JpaRepository<Justification, L
             @Param("attendanceRecordIds") List<Long> attendanceRecordIds);
 
     /**
-     * Cuenta las justificaciones enviadas en un rango de fechas
+     * Cuenta las justificaciones enviadas en un rango de fechas (aprobadas)
      */
-    @Query(value = "SELECT COUNT(*) FROM justifications j " +
-            "JOIN attendance_records ar ON j.attendance_record_id = ar.id_attendance_record " +
-            "WHERE TRUNC(ar.check_in) BETWEEN :startDate AND :endDate " +
-            "AND j.justification_text IS NOT NULL " +
-            "AND TRIM(j.justification_text) <> ''", nativeQuery = true)
+    @Query(value = """
+                SELECT COUNT(*)
+                FROM attendance_records ar
+                JOIN justifications j
+                  ON j.attendance_record_id = ar.id_attendance_record
+                WHERE TRUNC(ar.check_in) BETWEEN :startDate AND :endDate
+                AND j.approved = TRUE
+            """, nativeQuery = true)
     Long countJustifiedBetweenDates(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
@@ -53,20 +56,33 @@ public interface IJustificationRepository extends JpaRepository<Justification, L
     /**
      * Cuenta las justificaciones pendientes en un rango de fechas
      */
-    @Query(value = "SELECT COUNT(*) FROM justifications j " +
-            "JOIN attendance_records ar ON j.attendance_record_id = ar.id_attendance_record " +
-            "WHERE TRUNC(ar.check_in) BETWEEN :startDate AND :endDate " +
-            "AND (j.justification_text IS NULL OR TRIM(j.justification_text) = '')", nativeQuery = true)
+    @Query(value = """
+                SELECT COUNT(*)
+                FROM attendance_records ar
+                LEFT JOIN justifications j
+                  ON j.attendance_record_id = ar.id_attendance_record
+                WHERE TRUNC(ar.check_in) BETWEEN :startDate AND :endDate
+                AND ar.status IN ('LATE', 'ABSENT', 'EARLY_DEPARTURE')
+                AND (
+                       j.id_justification IS NULL
+                    OR j.justification_text IS NULL
+                    OR TRIM(j.justification_text) = ''
+                    OR j.approved = FALSE
+                )
+            """, nativeQuery = true)
     Long countNotJustifiedBetweenDates(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
     /**
-     * Cuenta el total de justificaciones en un rango de fechas
+     * Cuenta el total de justificaciones requeridas en un rango de fechas
      */
-    @Query(value = "SELECT COUNT(*) FROM justifications j " +
-            "JOIN attendance_records ar ON j.attendance_record_id = ar.id_attendance_record " +
-            "WHERE TRUNC(ar.check_in) BETWEEN :startDate AND :endDate", nativeQuery = true)
+    @Query(value = """
+                SELECT COUNT(*)
+                FROM attendance_records ar
+                WHERE TRUNC(ar.check_in) BETWEEN :startDate AND :endDate
+                AND ar.status IN ('LATE', 'ABSENT', 'EARLY_DEPARTURE')
+            """, nativeQuery = true)
     Long countTotalBetweenDates(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);

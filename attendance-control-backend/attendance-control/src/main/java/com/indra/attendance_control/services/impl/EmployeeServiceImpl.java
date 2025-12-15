@@ -1,10 +1,8 @@
 package com.indra.attendance_control.services.impl;
 
-import java.security.SecureRandom;
 import java.text.Normalizer;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -138,42 +136,46 @@ public class EmployeeServiceImpl implements IEmployeeService {
         return normalized;
     }
 
-    /**
-     * Genera contraseña temporal aleatoria de 8 caracteres
-     * Formato: 2 mayúsculas + 4 minúsculas + 2 números
-     */
+    // /**
+    //  * Genera contraseña temporal aleatoria de 8 caracteres
+    //  * Formato: 2 mayúsculas + 4 minúsculas + 2 números
+    //  */
+    // private String generateTemporaryPassword() {
+    //     String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    //     String lowerCase = "abcdefghijklmnopqrstuvwxyz";
+    //     String numbers = "0123456789";
+
+    //     SecureRandom random = new SecureRandom();
+    //     StringBuilder password = new StringBuilder();
+
+    //     // 2 mayúsculas
+    //     for (int i = 0; i < 2; i++) {
+    //         password.append(upperCase.charAt(random.nextInt(upperCase.length())));
+    //     }
+
+    //     // 4 minúsculas
+    //     for (int i = 0; i < 4; i++) {
+    //         password.append(lowerCase.charAt(random.nextInt(lowerCase.length())));
+    //     }
+
+    //     // 2 números
+    //     for (int i = 0; i < 2; i++) {
+    //         password.append(numbers.charAt(random.nextInt(numbers.length())));
+    //     }
+
+    //     // Mezclar caracteres
+    //     List<Character> chars = password.chars()
+    //             .mapToObj(c -> (char) c)
+    //             .collect(Collectors.toList());
+    //     Collections.shuffle(chars, random);
+
+    //     return chars.stream()
+    //             .map(String::valueOf)
+    //             .collect(Collectors.joining());
+    // }
+
     private String generateTemporaryPassword() {
-        String upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String lowerCase = "abcdefghijklmnopqrstuvwxyz";
-        String numbers = "0123456789";
-
-        SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder();
-
-        // 2 mayúsculas
-        for (int i = 0; i < 2; i++) {
-            password.append(upperCase.charAt(random.nextInt(upperCase.length())));
-        }
-
-        // 4 minúsculas
-        for (int i = 0; i < 4; i++) {
-            password.append(lowerCase.charAt(random.nextInt(lowerCase.length())));
-        }
-
-        // 2 números
-        for (int i = 0; i < 2; i++) {
-            password.append(numbers.charAt(random.nextInt(numbers.length())));
-        }
-
-        // Mezclar caracteres
-        List<Character> chars = password.chars()
-                .mapToObj(c -> (char) c)
-                .collect(Collectors.toList());
-        Collections.shuffle(chars, random);
-
-        return chars.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining());
+        return "12345";
     }
 
     private User createUser(String username, String password) {
